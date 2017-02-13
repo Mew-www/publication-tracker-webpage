@@ -13,12 +13,10 @@ export class ThemoviedbService {
   //API properties
   private api_key: string = TMDB_API_KEY;
   private lang_code: string = "en-US"; // TODO: i18n
-
   // Genremaps
   private movie_genremap: Array<any>;
   private tvshow_genremap: Array<any>;
   private genremaps_ready: boolean = false;
-
   // Previous result set (and pagination properties) -- bind to these
   public loading_results: boolean = false;
   public movie_results: Array<Movie> = [];

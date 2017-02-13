@@ -9,11 +9,13 @@ import { TrackingPageComponent } from './tracking-page/tracking-page.component';
 import { SearchPageComponent } from './search-page/search-page.component';
 
 import { RouterModule, Routes } from '@angular/router';
+import { TestPageComponent } from './test-page/test-page.component';
 
 
 const appRoutes: Routes = [
-  { path: 'trackin', component: TrackingPageComponent },
+  { path: 'tracking', component: TrackingPageComponent },
   { path: 'search', component: SearchPageComponent },
+  { path: 'test', component: TestPageComponent },
   { path: '**', component: TrackingPageComponent }
 ];
 
@@ -23,7 +25,8 @@ const appRoutes: Routes = [
     AppComponent,
     NavBarComponent,
     TrackingPageComponent,
-    SearchPageComponent
+    SearchPageComponent,
+    TestPageComponent
   ],
   imports: [
     BrowserModule,
