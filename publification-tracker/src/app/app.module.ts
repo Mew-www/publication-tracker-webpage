@@ -8,6 +8,16 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { TrackingPageComponent } from './tracking-page/tracking-page.component';
 import { SearchPageComponent } from './search-page/search-page.component';
 
+import { RouterModule, Routes } from '@angular/router';
+
+
+const appRoutes: Routes = [
+  { path: 'trackin', component: TrackingPageComponent },
+  { path: 'search', component: SearchPageComponent },
+  { path: '**', component: TrackingPageComponent }
+];
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -18,7 +28,8 @@ import { SearchPageComponent } from './search-page/search-page.component';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    RouterModule.forRoot(appRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]
