@@ -6,6 +6,5 @@ export interface Publification {
   release_date: Date;
   genres: Array<string>;
 
-  getReleaseDate(): Date;
   getFullName(): string;
 }
