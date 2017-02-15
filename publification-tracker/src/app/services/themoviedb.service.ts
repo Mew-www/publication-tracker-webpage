@@ -40,8 +40,8 @@ export class ThemoviedbService {
 
     Observable.forkJoin([movie_genremap_request, tvserie_genremap_request]) // Works like Promise.all()
       .subscribe(results => {
-        this.movie_genremap = results[0];
-        this.tvshow_genremap = results[1];
+        this.movie_genremap = results[0].genres;
+        this.tvshow_genremap = results[1].genres;
         this.genremaps_ready = true;
       });
   };
