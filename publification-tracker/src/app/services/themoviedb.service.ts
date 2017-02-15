@@ -10,24 +10,27 @@ import {TMDB_API_KEY} from "../tmdb-api-key";
 @Injectable()
 export class ThemoviedbService {
 
-  //API properties
-  private api_key: string = TMDB_API_KEY;
+  // Config
+  private static maximum_pages_per_query: Number = 10;
+
+  // BIND TO THESE: Genremap status, previous result set, and pagination properties
+  public genremaps_ready: boolean           = false;
+  public loading_new_results: boolean       = false;
+  public movie_results: Array<Movie>        = [];
+  public tvshow_results: Array<Tvshow>      = [];
+  public movie_pagination_pending: boolean  = false;
+  public tvshow_pagination_pending: boolean = false;
+
+  // API properties
+  private api_key: string = TMDB_API_KEY; // TODO: Optional setter in the GUI, Oppa BYOB style .\../
   private lang_code: string = "en-US"; // TODO: i18n
   // Genremaps
   private movie_genremap: Array<any>;
   private tvshow_genremap: Array<any>;
-  public genremaps_ready: boolean = false;
-  // Previous result set (and pagination properties) -- bind to these
-  public loading_new_results: boolean = false;
-  public movie_results: Array<Movie> = [];
-  public tvshow_results: Array<Tvshow> = [];
-  public movie_pagination_pending: boolean = false;
-  public tvshow_pagination_pending: boolean = false;
   // Pagination
-  private paginated_query: string = "";
+  private paginated_query: string;
   private movie_pages_prev_stop: Number;
   private tvshow_pages_prev_stop: Number;
-  private maximum_pages_per_query: Number = 10;
 
   constructor(private http: Http) {
     this.updateGenremaps();
@@ -72,6 +75,7 @@ export class ThemoviedbService {
       .map(res => res.json());
   };
 
+  // TODO: API error handling (specificly rate limiting...)
   public loadMoviesAndTvseriesByWildcard = (query: string) => {
 
     // Helper functions to recursively request new pages (and .resolve() after EITHER done OR limit reached)
@@ -167,7 +171,11 @@ export class ThemoviedbService {
       });
   };
 
+  // TODO: API error handling (specificly rate limiting...)
   public continueLoadingPaginated = () => {
+    // Prevent use if there is nothing to paginate
+    if (!this.movie_pagination_pending && !this.tvshow_pagination_pending)
+      return;
 
     let query = this.paginated_query;
     // Helper functions to recursively request new pages (and .resolve() after EITHER done OR limit reached)
