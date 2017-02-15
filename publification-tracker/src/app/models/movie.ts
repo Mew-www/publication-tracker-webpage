@@ -20,7 +20,8 @@ export class Movie implements Publification {
     this.original_language = tmdb_result_object.original_language;
     this.release_date      = new Date(tmdb_result_object.release_date);
     this.genres            = tmdb_result_object.genre_ids.map(genre_id => {
-      return movie_genremap.find(x => x.id === genre_id).name;
+      let genre = movie_genremap.find(x => x.id === genre_id);
+      return genre ? genre.name : "Unknown genre #"+genre_id;
     });
     this.overview          = tmdb_result_object.overview;
   }
