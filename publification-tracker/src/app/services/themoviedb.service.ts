@@ -23,8 +23,11 @@ export class ThemoviedbService {
   public tvshow_results: Array<Tvshow> = [];
   public movie_pagination_pending: boolean = false;
   public tvshow_pagination_pending: boolean = false;
-  private movie_start_page: Number;
-  private tvshow_start_page: Number;
+  // Pagination
+  private paginated_query: string = "";
+  private movie_pages_prev_stop: Number;
+  private tvshow_pages_prev_stop: Number;
+  private maximum_pages_per_query: Number = 10;
 
   constructor(private http: Http) {
     this.updateGenremaps();
@@ -69,26 +72,30 @@ export class ThemoviedbService {
       .map(res => res.json());
   };
 
-  loadMoviesAndTvseriesByWildcard = (query: string) => {
+  public loadMoviesAndTvseriesByWildcard = (query: string) => {
 
-    let loadMoviesPaginated = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
+    // Helper functions to recursively request new pages (and .resolve() after EITHER done OR limit reached)
+    let loadMoviesPaginated  = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
       this.getMoviesJsonByQuery(query, current_page)
         .subscribe(response => {
-          let results_so_far = prev_results.concat(response.results);
+          let results_so_far = prev_results.concat(
+            response.results.map(movieJson => { return new Movie(movieJson, this.movie_genremap); })
+          );
 
-          if (current_page > (this.movie_start_page+9)) {
-            // If limit of 10 pages exceeded
-            this.movie_results = results_so_far.map(movie => { return new Movie(movie, this.movie_genremap); });
+          if (current_page > (this.movie_pages_prev_stop+this.maximum_pages_per_query)) {
+            // If limit reached
             this.movie_pagination_pending = true;
-            this.movie_start_page = current_page;
+            this.movie_pages_prev_stop    = current_page;
+            this.paginated_query          = query;
+            this.movie_results            = results_so_far;
             deferredCompletion.resolve();
           } else if (response.total_pages > current_page) {
             // If we have more total pages
             loadMoviesPaginated((current_page+1), results_so_far, deferredCompletion);
           } else {
             // If we have all results and nothing more to page
-            this.movie_results = results_so_far.map(movie => { return new Movie(movie, this.movie_genremap); });
             this.movie_pagination_pending = false;
+            this.movie_results            = results_so_far;
             deferredCompletion.resolve();
           }
         });
@@ -96,21 +103,120 @@ export class ThemoviedbService {
     let loadTvshowsPaginated = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
       this.getTvshowsJsonByQuery(query, current_page)
         .subscribe(response => {
-          let results_so_far = prev_results.concat(response.results);
+          let results_so_far = prev_results.concat(
+            response.results.map(tvshowJson => { return new Tvshow(tvshowJson, this.tvshow_genremap); })
+          );
 
-          if (current_page > (this.tvshow_start_page+9)) {
-            // If limit of 10 pages exceeded
-            this.tvshow_results = results_so_far.map(tvshow => { return new Tvshow(tvshow, this.tvshow_genremap); });
+          if (current_page > (this.tvshow_pages_prev_stop+this.maximum_pages_per_query)) {
+            // If limit of 10 pages reached
             this.tvshow_pagination_pending = true;
-            this.tvshow_start_page = current_page;
+            this.tvshow_pages_prev_stop    = current_page;
+            this.paginated_query           = query;
+            this.tvshow_results            = results_so_far;
             deferredCompletion.resolve();
           } else if (response.total_pages > current_page) {
             // If we have more total pages
             loadTvshowsPaginated((current_page+1), results_so_far, deferredCompletion);
           } else {
             // If we have all results and nothing more to page
-            this.tvshow_results = results_so_far.map(tvshow => { return new Tvshow(tvshow, this.tvshow_genremap); });
             this.tvshow_pagination_pending = false;
+            this.tvshow_results            = results_so_far;
+            deferredCompletion.resolve();
+          }
+        });
+    }.bind(this);
+
+    this.movie_results             = [];
+    this.tvshow_results            = [];
+    this.movie_pagination_pending  = false;
+    this.tvshow_pagination_pending = false;
+    this.loading_new_results       = true;
+
+    // Request (maximum 10 pages) movies, and keep track of progress in deferred
+    let deferredMovieLoad = new DeferredPromise();
+    this.getMoviesJsonByQuery(query)
+      .subscribe(first_results => {
+        if (first_results.total_pages === 1) {
+          this.movie_results = first_results.results.map(movieJson => new Movie(movieJson, this.movie_genremap));
+          deferredMovieLoad.resolve();
+        } else {
+          // Paginate maximum of 10 times, cache results, and resolve the promise when done
+          this.movie_pages_prev_stop = 0;
+          loadMoviesPaginated(2, [], deferredMovieLoad);
+        }
+      });
+
+    // Request (maximum 10 pages) tvseries, and keep track of progress in deferred
+    let deferredTvshowLoad = new DeferredPromise();
+    this.getTvshowsJsonByQuery(query)
+      .subscribe(first_results => {
+        if (first_results.total_pages === 1) {
+          this.tvshow_results = first_results.results.map(tvshowJson => new Tvshow(tvshowJson, this.tvshow_genremap));
+          deferredTvshowLoad.resolve();
+        } else {
+          // Paginate maximum of 10 times, cache results, and resolve the promise when done
+          this.tvshow_pages_prev_stop = 0;
+          loadTvshowsPaginated(2, [], deferredTvshowLoad);
+        }
+      });
+
+    // After both requests (or chains of requests) are done, set "loading -state" false
+    Promise.all([deferredMovieLoad.promise, deferredTvshowLoad.promise])
+      .then(() => {
+        this.loading_new_results = false;
+      });
+  };
+
+  public continueLoadingPaginated = () => {
+
+    let query = this.paginated_query;
+    // Helper functions to recursively request new pages (and .resolve() after EITHER done OR limit reached)
+    let loadMoviesPaginated  = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
+      this.getMoviesJsonByQuery(query, current_page)
+        .subscribe(response => {
+          let results_so_far = prev_results.concat(
+            response.results.map(movieJson => { return new Movie(movieJson, this.movie_genremap); })
+          );
+
+          if (current_page > (this.movie_pages_prev_stop+this.maximum_pages_per_query)) {
+            // If limit reached
+            this.movie_pagination_pending = true;
+            this.movie_pages_prev_stop    = current_page;
+            this.paginated_query          = query;
+            this.movie_results            = results_so_far;
+            deferredCompletion.resolve();
+          } else if (response.total_pages > current_page) {
+            // If we have more total pages
+            loadMoviesPaginated((current_page+1), results_so_far, deferredCompletion);
+          } else {
+            // If we have all results and nothing more to page
+            this.movie_pagination_pending = false;
+            this.movie_results            = results_so_far;
+            deferredCompletion.resolve();
+          }
+        });
+    }.bind(this);
+    let loadTvshowsPaginated = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
+      this.getTvshowsJsonByQuery(query, current_page)
+        .subscribe(response => {
+          let results_so_far = prev_results.concat(
+            response.results.map(tvshowJson => { return new Tvshow(tvshowJson, this.tvshow_genremap); })
+          );
+
+          if (current_page > (this.tvshow_pages_prev_stop+this.maximum_pages_per_query)) {
+            // If limit of 10 pages reached
+            this.tvshow_pagination_pending = true;
+            this.tvshow_pages_prev_stop    = current_page;
+            this.paginated_query           = query;
+            this.tvshow_results            = results_so_far;
+            deferredCompletion.resolve();
+          } else if (response.total_pages > current_page) {
+            // If we have more total pages
+            loadTvshowsPaginated((current_page+1), results_so_far, deferredCompletion);
+          } else {
+            // If we have all results and nothing more to page
+            this.tvshow_pagination_pending = false;
+            this.tvshow_results            = results_so_far;
             deferredCompletion.resolve();
           }
         });
@@ -118,29 +224,18 @@ export class ThemoviedbService {
 
     this.loading_new_results = true;
 
-    this.getMoviesJsonByQuery(query)
-      .subscribe(first_results => {
-        if (first_results.total_pages === 1) {
-          this.movie_results = first_results.results
-            .map(movie => {
-              return new Movie(movie, this.movie_genremap);
-            });
-          this.loading_new_results = false;
-        } else {
-          // Paginate maximum of 10 times and cache
-          this.movie_pagination_pending  = true;
-          this.tvshow_pagination_pending = true;
-          this.movie_start_page  = 1;
-          this.tvshow_start_page = 1;
-          let deferredMovieLoad = new DeferredPromise();
-          let deferredTvshowLoad = new DeferredPromise();
-          loadMoviesPaginated(2, [], deferredMovieLoad);
-          loadTvshowsPaginated(2, [], deferredTvshowLoad);
-          Promise.all([deferredMovieLoad.promise, deferredTvshowLoad.promise])
-            .then(() => {
-              this.loading_new_results = false;
-            });
-        }
+    // Request (maximum 10 pages) movies, and keep track of progress in deferred
+    let deferredMovieLoad = new DeferredPromise();
+    loadMoviesPaginated(this.movie_pages_prev_stop, this.movie_results, deferredMovieLoad);
+
+    // Request (maximum 10 pages) tvseries, and keep track of progress in deferred
+    let deferredTvshowLoad = new DeferredPromise();
+    loadTvshowsPaginated(this.tvshow_pages_prev_stop, this.tvshow_results, deferredTvshowLoad);
+
+    // After both requests (or chains of requests) are done, set "loading -state" false
+    Promise.all([deferredMovieLoad.promise, deferredTvshowLoad.promise])
+      .then(() => {
+        this.loading_new_results = false;
       });
   };
 

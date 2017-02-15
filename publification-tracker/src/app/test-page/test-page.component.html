@@ -5,7 +5,12 @@
 <p>
   <u>Making query</u><br/>
   <input #query type="text" class="form-control"/><br/>
-  <button (click)="themoviedbService.loadMoviesAndTvseriesByWildcard(query.value)">Query</button>
+  <button
+      [disabled]="themoviedbService.loading_new_results"
+      (click)="themoviedbService.loadMoviesAndTvseriesByWildcard(query.value)"
+  >
+    Query
+  </button>
 </p>
 <p>
   <u>Keeping track on query</u><br/>
@@ -15,9 +20,26 @@
   <br/>
   {{themoviedbService.tvshow_pagination_pending ? "More tvshow results available" : "Got all tvshows from last query."}}
   <br/>
+  <button
+      *ngIf="themoviedbService.movie_pagination_pending || themoviedbService.tvshow_pagination_pending"
+      [disabled]="themoviedbService.loading_new_results"
+      (click)="themoviedbService.continueLoadingPaginated()"
+  >
+    Load (up to 10) more pages of results
+  </button>
 </p>
-<p>
-
-</p>
-<p></p>
-<p></p>
+<div>
+  <u>Previous query's resultset</u><br/>
+  Movies ({{themoviedbService.movie_results.length}}):<br/>
+  <ul>
+    <li *ngFor="let movie of themoviedbService.movie_results">
+      {{movie.getFullName()}}
+    </li>
+  </ul>
+  Tvseries ({{themoviedbService.tvshow_results.length}}):<br/>
+  <ul>
+    <li *ngFor="let tvshow of themoviedbService.tvshow_results">
+      {{tvshow.getFullName()}}
+    </li>
+  </ul>
+</div>
