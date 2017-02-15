@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ThemoviedbService} from "../services/themoviedb.service";
 
 @Component({
   selector: 'app-test-page',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TestPageComponent implements OnInit {
 
-  constructor() { }
+  constructor(private themoviedbService: ThemoviedbService) { }
 
   ngOnInit() {
   }

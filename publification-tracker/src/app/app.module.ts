@@ -10,6 +10,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
 
 import { RouterModule, Routes } from '@angular/router';
 import { TestPageComponent } from './test-page/test-page.component';
+import {ThemoviedbService} from "./services/themoviedb.service";
 
 
 const appRoutes: Routes = [
@@ -34,7 +35,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [],
+  providers: [ThemoviedbService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

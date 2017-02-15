@@ -1,3 +1,23 @@
 <p>
-  test-page works!
+  <u>Genremaps</u><br/>
+  {{!themoviedbService.genremaps_ready ? "Genremaps loading . . ." : "Genremaps ready. (Loaded)"}}
+</p><br/>
+<p>
+  <u>Making query</u><br/>
+  <input #query type="text" class="form-control"/><br/>
+  <button (click)="themoviedbService.loadMoviesAndTvseriesByWildcard(query.value)">Query</button>
 </p>
+<p>
+  <u>Keeping track on query</u><br/>
+  {{themoviedbService.loading_new_results ? "Loading results . . . " : "Ready to process next query."}}
+  <br/>
+  {{themoviedbService.movie_pagination_pending ? "More movie results available" : "Got all movies from last query."}}
+  <br/>
+  {{themoviedbService.tvshow_pagination_pending ? "More tvshow results available" : "Got all tvshows from last query."}}
+  <br/>
+</p>
+<p>
+
+</p>
+<p></p>
+<p></p>
