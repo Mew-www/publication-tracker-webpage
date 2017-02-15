@@ -11,7 +11,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { RouterModule, Routes } from '@angular/router';
 import { TestPageComponent } from './test-page/test-page.component';
 import {ThemoviedbService} from "./services/themoviedb.service";
-
+import {PreferencesService} from "./services/preferences.service";
 
 const appRoutes: Routes = [
   { path: 'tracking', component: TrackingPageComponent },
@@ -35,7 +35,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ThemoviedbService],
+  providers: [ThemoviedbService, PreferencesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
