@@ -22,7 +22,6 @@ export class SearchPageComponent implements OnInit {
   };
 
   ngOnInit() {
-    window['trythis'] = this.isServicesStandby;
 
     // Bind var to API(s) being ready
     this.themoviedbService.genremaps_readiness$.subscribe(state => { this.tmdbApiReady=state; });
