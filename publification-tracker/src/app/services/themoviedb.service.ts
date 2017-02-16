@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import {Observable} from "rxjs";
+import {Observable, BehaviorSubject} from "rxjs";
 import {Movie} from "../models/movie";
 import {Tvshow} from "../models/tvshow";
 import {DeferredPromise} from "../helpers/deferred-promise";
@@ -11,26 +11,34 @@ import {TMDB_API_KEY} from "../tmdb-api-key";
 export class ThemoviedbService {
 
   // Config
-  private static maximum_pages_per_query: Number = 10;
-
-  // BIND TO THESE: Genremap status, previous result set, and pagination properties
-  public genremaps_ready: boolean           = false;
-  public loading_new_results: boolean       = false;
-  public movie_results: Array<Movie>        = [];
-  public tvshow_results: Array<Tvshow>      = [];
-  public movie_pagination_pending: boolean  = false;
-  public tvshow_pagination_pending: boolean = false;
+  private maximum_pages_per_query: Number = 10;
 
   // API properties
   private api_key: string = TMDB_API_KEY; // TODO: Optional setter in the GUI, Oppa BYOB style .\../
   private lang_code: string = "en-US"; // TODO: i18n
+
   // Genremaps
   private movie_genremap: Array<any>;
   private tvshow_genremap: Array<any>;
+  private genremaps_readiness_source = new BehaviorSubject<boolean>(false);
   // Pagination
+
   private paginated_query: string;
   private movie_pages_prev_stop: Number;
   private tvshow_pages_prev_stop: Number;
+
+  // Results
+  private movie_results_source = new BehaviorSubject<Array<Movie>>([]);
+  private tvshow_results_source = new BehaviorSubject<Array<Tvshow>>([]);
+  private loading_new_results_source = new BehaviorSubject<boolean>(false);
+
+  // BIND TO THESE: Genremap status, previous result set, and pagination properties
+  public genremaps_readiness$               = this.genremaps_readiness_source.asObservable();
+  public loading_new_results$               = this.loading_new_results_source.asObservable();
+  public movie_results$                     = this.movie_results_source.asObservable();
+  public tvshow_results$                    = this.tvshow_results_source.asObservable();
+  public movie_pagination_pending: boolean  = false;
+  public tvshow_pagination_pending: boolean = false;
 
   constructor(private http: Http) {
     this.updateGenremaps();
@@ -48,7 +56,7 @@ export class ThemoviedbService {
       .subscribe(results => {
         this.movie_genremap = results[0].genres;
         this.tvshow_genremap = results[1].genres;
-        this.genremaps_ready = true;
+        this.genremaps_readiness_source.next(true);
       });
   };
 
@@ -75,10 +83,25 @@ export class ThemoviedbService {
       .map(res => res.json());
   };
 
+  // Getters and setters in case we disable the buffered approach in future...
+  private get movie_results() { return this.movie_results_source.value; }
+  private set movie_results(new_value) { this.movie_results_source.next(new_value); }
+  private get tvshow_results() { return this.tvshow_results_source.value; }
+  private set tvshow_results(new_value) { this.tvshow_results_source.next(new_value); }
+  private get loading_new_results() { return this.loading_new_results_source.value; }
+  private set loading_new_results(new_value) { this.loading_new_results_source.next(new_value); }
+
   // TODO: API error handling (specificly rate limiting...)
   public loadMoviesAndTvseriesByWildcard = (query: string) => {
+    // Prevent use if query in progress... (or develop a cancelling routine with respective .unsubscribe() calls)
+    if (this.loading_new_results)
+      return;
 
-    // Helper functions to recursively request new pages (and .resolve() after EITHER done OR limit reached)
+    // Prevent use if query is empty
+    if (query.trim().length === 0)
+      return;
+
+    // Recursive functions to request more pages (and .resolve() after EITHER done OR page limit reached)
     let loadMoviesPaginated  = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
       this.getMoviesJsonByQuery(query, current_page)
         .subscribe(response => {
@@ -129,15 +152,16 @@ export class ThemoviedbService {
           }
         });
     }.bind(this);
+    let deferredMovieLoad = new DeferredPromise();
+    let deferredTvshowLoad = new DeferredPromise();
 
+    this.loading_new_results       = true;
     this.movie_results             = [];
     this.tvshow_results            = [];
     this.movie_pagination_pending  = false;
     this.tvshow_pagination_pending = false;
-    this.loading_new_results       = true;
 
     // Request (maximum 10 pages) movies, and keep track of progress in deferred
-    let deferredMovieLoad = new DeferredPromise();
     this.getMoviesJsonByQuery(query)
       .subscribe(first_results => {
         if (first_results.total_pages === 1) {
@@ -151,7 +175,6 @@ export class ThemoviedbService {
       });
 
     // Request (maximum 10 pages) tvseries, and keep track of progress in deferred
-    let deferredTvshowLoad = new DeferredPromise();
     this.getTvshowsJsonByQuery(query)
       .subscribe(first_results => {
         if (first_results.total_pages === 1) {
@@ -173,6 +196,10 @@ export class ThemoviedbService {
 
   // TODO: API error handling (specificly rate limiting...)
   public continueLoadingPaginated = () => {
+    // Prevent use if query in progress... (or develop a cancelling routine with respective .unsubscribe() calls)
+    if (this.loading_new_results)
+      return;
+
     // Prevent use if there is nothing to paginate
     if (!this.movie_pagination_pending && !this.tvshow_pagination_pending)
       return;
@@ -229,15 +256,15 @@ export class ThemoviedbService {
           }
         });
     }.bind(this);
+    let deferredMovieLoad = new DeferredPromise();
+    let deferredTvshowLoad = new DeferredPromise();
 
     this.loading_new_results = true;
 
     // Request (maximum 10 pages) movies, and keep track of progress in deferred
-    let deferredMovieLoad = new DeferredPromise();
     loadMoviesPaginated(this.movie_pages_prev_stop, this.movie_results, deferredMovieLoad);
 
     // Request (maximum 10 pages) tvseries, and keep track of progress in deferred
-    let deferredTvshowLoad = new DeferredPromise();
     loadTvshowsPaginated(this.tvshow_pages_prev_stop, this.tvshow_results, deferredTvshowLoad);
 
     // After both requests (or chains of requests) are done, set "loading -state" false
