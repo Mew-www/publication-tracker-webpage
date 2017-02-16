@@ -15,10 +15,11 @@
             type="text"
             placeholder="Search"
             ngModel
+            (keyup.enter)="onStartSearch(search.value)"
         />
         <button
             [disabled]="loading || !search.value"
-            (click)="onClickSearch(search.value)"
+            (click)="onStartSearch(search.value)"
         >
           Search
         </button>
