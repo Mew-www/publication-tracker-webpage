@@ -12,6 +12,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { TestPageComponent } from './test-page/test-page.component';
 import {ThemoviedbService} from "./services/themoviedb.service";
 import {PreferencesService} from "./services/preferences.service";
+import { KonamiComponent } from './konami/konami.component';
 
 const appRoutes: Routes = [
   { path: 'tracking', component: TrackingPageComponent },
@@ -27,7 +28,8 @@ const appRoutes: Routes = [
     NavBarComponent,
     TrackingPageComponent,
     SearchPageComponent,
-    TestPageComponent
+    TestPageComponent,
+    KonamiComponent
   ],
   imports: [
     BrowserModule,
