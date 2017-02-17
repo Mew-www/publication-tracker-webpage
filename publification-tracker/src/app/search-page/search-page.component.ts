@@ -13,7 +13,6 @@ export class SearchPageComponent implements OnInit {
   private tmdbApiReady: boolean = false;
   private results: Array<Publification> = [];
   private loading: boolean = false;
-  private searchEverInitialized = false;
 
   constructor(private themoviedbService: ThemoviedbService) { }
 
@@ -56,11 +55,6 @@ export class SearchPageComponent implements OnInit {
 
       // Execute searches
       this.themoviedbService.loadMoviesAndTvseriesByWildcard(search_query_string);
-
-      // Mark we've initialized the searches (so "empty resultset" means "no results found" instead)
-      if (!this.searchEverInitialized) {
-        this.searchEverInitialized = true;
-      }
     }
   };
 

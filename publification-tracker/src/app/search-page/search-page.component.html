@@ -30,13 +30,13 @@
   <div class="SearchPage__content" *ngIf="tmdbApiReady">
     <div class="SearchResults">
       <div class="SearchResults__header">
-        <span *ngIf="!searchEverInitialized">
+        <span *ngIf="!themoviedbService.searchEverInitialized">
           Odotetaan haun käynnistämistä
         </span>
         <span *ngIf="loading">
           Ladataan uusia tuloksia . . . ({{results.length}} löytynyt)
         </span>
-        <span *ngIf="searchEverInitialized && !loading">
+        <span *ngIf="themoviedbService.searchEverInitialized && !loading">
           <span *ngIf="results.length">
             Haku valmis, löytyi {{results.length}} tulosta
           </span>
@@ -45,7 +45,7 @@
           </span>
         </span>
       </div>
-      <div class="SearchResults__content" *ngIf="searchEverInitialized">
+      <div class="SearchResults__content" *ngIf="themoviedbService.searchEverInitialized">
         <span *ngFor="let publification of results">
           &lt; {{getRespectivePublificationType(publification.type)}} &gt; {{publification.getFullName()}} [{{publification.getReleaseDateAsString()}}] <span *ngFor="let g of publification.genres">{{g}} :: </span>
           <br/>

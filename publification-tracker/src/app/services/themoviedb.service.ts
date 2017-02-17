@@ -39,6 +39,7 @@ export class ThemoviedbService {
   public tvshow_results$                    = this.tvshow_results_source.asObservable();
   public movie_pagination_pending: boolean  = false;
   public tvshow_pagination_pending: boolean = false;
+  public searchEverInitialized: boolean = false;
 
   constructor(private http: Http) {
     this.updateGenremaps();
@@ -100,6 +101,10 @@ export class ThemoviedbService {
     // Prevent use if query is empty
     if (query.trim().length === 0)
       return;
+
+    // Mark that "any following empty resultsets are actual empty resultsets and not initial values of BehaviourSubject"
+    if (!this.searchEverInitialized)
+      this.searchEverInitialized = true;
 
     // Recursive functions to request more pages (and .resolve() after EITHER done OR page limit reached)
     let loadMoviesPaginated  = function(current_page, prev_results, deferredCompletion: DeferredPromise) {
