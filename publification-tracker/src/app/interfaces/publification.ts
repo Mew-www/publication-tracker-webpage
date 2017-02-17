@@ -7,4 +7,5 @@ export interface Publification {
   genres: Array<string>;
 
   getFullName(): string;
+  getReleaseDateAsString(): string;
 }

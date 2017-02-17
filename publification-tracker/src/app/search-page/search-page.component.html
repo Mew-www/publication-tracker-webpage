@@ -47,9 +47,8 @@
       </div>
       <div class="SearchResults__content" *ngIf="searchEverInitialized">
         <span *ngFor="let publification of results">
-          {{publification.getFullName()}} [{{publification.release_date.getUTCDate() + ". "
-                                           + publification.release_date.getUTCMonth() + ". "
-                                           + publification.release_date.getUTCFullYear()}} / {{publification.release_date}}] *
+          &lt; {{getRespectivePublificationType(publification.type)}} &gt; {{publification.getFullName()}} [{{publification.getReleaseDateAsString()}}] <span *ngFor="let g of publification.genres">{{g}} :: </span>
+          <br/>
         </span>
       </div>
     </div>

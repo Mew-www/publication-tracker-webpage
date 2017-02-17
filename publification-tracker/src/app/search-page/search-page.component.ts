@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ThemoviedbService} from "../services/themoviedb.service";
 import {Publification} from "../interfaces/publification";
-import {Observable} from "rxjs";
+import {PublificationType} from "../enums/publification-type";
 
 @Component({
   selector: 'app-search-page',
@@ -21,8 +21,21 @@ export class SearchPageComponent implements OnInit {
     return this.tmdbApiReady && !this.loading;
   };
 
-  ngOnInit() {
+  private getRespectivePublificationType = (type_id) => {
+    switch(type_id) {
 
+      case PublificationType.MOVIE:
+        return "A movie";
+
+      case PublificationType.TVSHOW:
+        return "A tv show";
+
+      default:
+        return "Undefined publification type"
+    }
+  };
+
+  ngOnInit() {
     // Bind var to API(s) being ready
     this.themoviedbService.genremaps_readiness$.subscribe(state => { this.tmdbApiReady=state; });
 
