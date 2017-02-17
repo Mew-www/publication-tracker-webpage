@@ -1,6 +1,6 @@
 <p>
   <u>Genremaps</u><br/>
-  {{!themoviedbService.genremaps_ready ? "Genremaps loading . . ." : "Genremaps ready. (Loaded)"}}
+  {{!(themoviedbService.genremaps_readiness$ | async) ? "Genremaps loading . . ." : "Genremaps ready. (Loaded)"}}
 </p><br/>
 <p>
   <u>Making query</u><br/>
@@ -14,7 +14,7 @@
 </p>
 <p>
   <u>Keeping track on query</u><br/>
-  {{themoviedbService.loading_new_results ? "Loading results . . . " : "Ready to process next query."}}
+  {{(themoviedbService.loading_new_results | async) ? "Loading results . . . " : "Ready to process next query."}}
   <br/>
   {{themoviedbService.movie_pagination_pending ? "More movie results available" : "Got all movies from last query."}}
   <br/>
@@ -22,7 +22,7 @@
   <br/>
   <button
       *ngIf="themoviedbService.movie_pagination_pending || themoviedbService.tvshow_pagination_pending"
-      [disabled]="themoviedbService.loading_new_results"
+      [disabled]="themoviedbService.loading_new_results | async"
       (click)="themoviedbService.continueLoadingPaginated()"
   >
     Load (up to 10) more pages of results
@@ -32,13 +32,13 @@
   <u>Previous query's resultset</u><br/>
   Movies ({{themoviedbService.movie_results.length}}):<br/>
   <ul>
-    <li *ngFor="let movie of themoviedbService.movie_results">
+    <li *ngFor="let movie of (themoviedbService.movie_results$ | async)">
       {{movie.getFullName()}}
     </li>
   </ul>
   Tvseries ({{themoviedbService.tvshow_results.length}}):<br/>
   <ul>
-    <li *ngFor="let tvshow of themoviedbService.tvshow_results">
+    <li *ngFor="let tvshow of (themoviedbService.tvshow_results$ | async)">
       {{tvshow.getFullName()}}
     </li>
   </ul>

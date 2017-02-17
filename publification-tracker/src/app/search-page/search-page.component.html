@@ -1,8 +1,56 @@
 <div class="SearchPage">
-  <div class="SearchPage__controls">
-    <div></div>
+
+  <div class="SearchPage__loader" *ngIf="!tmdbApiReady">
+    <p>Initializing API . . .</p>
   </div>
-  <div class="SearchPage__content">
-    <div></div>
+
+  <div class="SearchPage__controls" *ngIf="tmdbApiReady">
+    <div class="SearchFilters">
+      <div class="SearchFilters__icon">
+        <span class="glyphicon glyphicon-search"></span>
+      </div>
+      <div class="SearchFilters__input-group">
+        <input
+            #search
+            type="text"
+            placeholder="Search"
+            ngModel
+            (keyup.enter)="onStartSearch(search.value)"
+        />
+        <button
+            [disabled]="loading || !search.value"
+            (click)="onStartSearch(search.value)"
+        >
+          Search
+        </button>
+      </div>
+    </div>
   </div>
+
+  <div class="SearchPage__content" *ngIf="tmdbApiReady">
+    <div class="SearchResults">
+      <div class="SearchResults__header">
+        <span *ngIf="!searchEverInitialized">
+          Odotetaan haun käynnistämistä
+        </span>
+        <span *ngIf="loading">
+          Ladataan uusia tuloksia . . . ({{results.length}} löytynyt)
+        </span>
+        <span *ngIf="searchEverInitialized && !loading">
+          <span *ngIf="results.length">
+            Haku valmis, löytyi {{results.length}} tulosta
+          </span>
+          <span *ngIf="!results.length">
+            Haulla ei löytynyt yhtään tulosta
+          </span>
+        </span>
+      </div>
+      <div class="SearchResults__content" *ngIf="searchEverInitialized">
+        <span *ngFor="let publification of results">
+          {{publification.getFullName()}} *
+        </span>
+      </div>
+    </div>
+  </div>
+
 </div>
