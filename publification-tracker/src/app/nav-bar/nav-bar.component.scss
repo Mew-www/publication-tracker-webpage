@@ -7,3 +7,9 @@ nav{
 .navbar-light a.nav-link:hover{
   color:#4dd7fa;
 }
+.navbar-light .navbar-brand, .navbar-light .navbar-toggler{
+  color: #92d36e;
+}
+.navbar .navbar-toggleable-md .navbar-light .bg-faded{
+  float: right;
+}
