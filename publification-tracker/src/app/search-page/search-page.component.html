@@ -30,26 +30,21 @@
   <div class="SearchPage__content" *ngIf="tmdbApiReady">
     <div class="SearchResults">
       <div class="SearchResults__header">
-        <span *ngIf="!themoviedbService.searchEverInitialized">
-          Odotetaan haun käynnistämistä
-        </span>
-        <span *ngIf="loading">
-          Ladataan uusia tuloksia . . . ({{results.length}} löytynyt)
-        </span>
+
+        <span *ngIf="!(themoviedbService.searchEverInitialized)">Odotetaan haun käynnistämistä</span>
+
+        <span *ngIf="loading">Ladataan uusia tuloksia . . . ({{results.length}} löytynyt)</span>
+
         <span *ngIf="themoviedbService.searchEverInitialized && !loading">
-          <span *ngIf="results.length">
-            Haku valmis, löytyi {{results.length}} tulosta
-          </span>
-          <span *ngIf="!results.length">
-            Haulla ei löytynyt yhtään tulosta
-          </span>
+          <span *ngIf="results.length">Haku valmis, löytyi {{results.length}} tulosta</span>
+          <span *ngIf="!(results.length)">Haulla ei löytynyt yhtään tulosta</span>
         </span>
+
       </div>
-      <div class="SearchResults__content" *ngIf="themoviedbService.searchEverInitialized">
-        <span *ngFor="let publification of results">
-          &lt; {{getRespectivePublificationType(publification.type)}} &gt; {{publification.getFullName()}} [{{publification.getReleaseDateAsString()}}] <span *ngFor="let g of publification.genres">{{g}} :: </span>
-          <br/>
-        </span>
+      <div class="SearchResults__content" *ngIf="themoviedbService.searchEverInitialized && results.length">
+        <app-publification-table
+            [publifications]="results"
+        ></app-publification-table>
       </div>
     </div>
   </div>

@@ -13,6 +13,8 @@ import { TestPageComponent } from './test-page/test-page.component';
 import {ThemoviedbService} from "./services/themoviedb.service";
 import {PreferencesService} from "./services/preferences.service";
 import { KonamiComponent } from './konami/konami.component';
+import { PublificationTableComponent } from './publification-table/publification-table.component';
+import {TranslatorService} from "./services/translator.service";
 
 const appRoutes: Routes = [
   { path: 'tracking', component: TrackingPageComponent },
@@ -29,7 +31,8 @@ const appRoutes: Routes = [
     TrackingPageComponent,
     SearchPageComponent,
     TestPageComponent,
-    KonamiComponent
+    KonamiComponent,
+    PublificationTableComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +40,7 @@ const appRoutes: Routes = [
     HttpModule,
     RouterModule.forRoot(appRoutes)
   ],
-  providers: [ThemoviedbService, PreferencesService],
+  providers: [ThemoviedbService, PreferencesService, TranslatorService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

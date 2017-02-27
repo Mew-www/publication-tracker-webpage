@@ -1,0 +1,34 @@
+<table>
+  <thead>
+    <tr>
+      <th>{{gettext(current_language, "publication_release_date")}}</th>
+      <th>{{gettext(current_language, "publication_title")}}</th>
+      <th>{{gettext(current_language, "publication_type")}}</th>
+      <th>{{gettext(current_language, "publication_genres")}}</th>
+      <th class="publification-control-title"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let pub of publifications">
+      <td class="release-date">
+        {{pub.getReleaseDateAsString()}}
+      </td>
+      <td class="title">
+        {{pub.getFullName()}}
+      </td>
+      <td class="type">
+        {{getRespectivePublificationType(pub.type)}}
+      </td>
+      <td class="genres">
+        <span class="genre-wrapper" *ngFor="let genre of pub.genres">{{genre}}</span>
+      </td>
+      <td class="publification-control">
+        <button
+          class="btn btn-info"
+        >
+          {{gettext(current_language, "track_new_publication")}}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

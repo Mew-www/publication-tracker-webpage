@@ -20,20 +20,6 @@ export class SearchPageComponent implements OnInit {
     return this.tmdbApiReady && !this.loading;
   };
 
-  private getRespectivePublificationType = (type_id) => {
-    switch(type_id) {
-
-      case PublificationType.MOVIE:
-        return "A movie";
-
-      case PublificationType.TVSHOW:
-        return "A tv show";
-
-      default:
-        return "Undefined publification type"
-    }
-  };
-
   ngOnInit() {
     // Bind var to API(s) being ready
     this.themoviedbService.genremaps_readiness$.subscribe(state => { this.tmdbApiReady=state; });
