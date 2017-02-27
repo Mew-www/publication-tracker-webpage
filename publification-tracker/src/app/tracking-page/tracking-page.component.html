@@ -27,41 +27,29 @@
 </div>
 <div class="row">
   <div class="col-3"></div>
-  <div class="col">
+  <div class="col"> <ul></ul>
     <table class="table table-responsive">
       <thead>
-      <tr>
-        <th>Date</th>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Genre</th>
-      </tr>
+        <tr>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Genre</th>
+        </tr>
       </thead>
       <tbody>
-      <tr>
-        <th scope="row">15.02.2020</th>
-        <td>Movie the Upcoming</td>
-        <td>Movie</td>
-        <td>Action</td>
-        <td>
-          <label class="form-check-label">
-            <input class="form-check-input" type="checkbox"> Remove
-          </label>
-        </td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>Larry</td>
-        <td>the Bird</td>
-        <td>@twitter</td>
-      </tr>
-      </tbody>
+       <tr *ngFor="let movie of movies">
+         <th scope="row">{{movie.PDate}}</th>
+         <td>{{movie.Name}}</td>
+         <td>{{movie.Type}}</td>
+         <td>{{movie.Genre}}</td>
+         <td>
+           <label class="form-check-label">
+             <button class="btn btn-danger" (click)="Onclick(movie.PDate,movie.Name)">Remove</button>
+           </label>
+         </td>
+       </tr>
+     </tbody>
     </table>
   </div>
 </div>
