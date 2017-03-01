@@ -1,3 +1,5 @@
+@import '../color-scheme-variables';
+
 .genre-wrapper {
   background: #ffd019;
   margin-right: 1em;
@@ -8,7 +10,7 @@
 
 table {
   border-collapse: separate;
-  color: white;
+  color: $page-text-color;
 
   /* Cell size */
   th, td {
@@ -18,18 +20,18 @@ table {
   /* Cell colour */
   thead tr th {
     /* Headings */
-    background: grey;
+    background: $table-heading-background-color;
     &.publification-control-title { background: initial; }
   }
   tbody tr {
     &:nth-child(odd) td {
       /* Odd rows */
-      background: lightgrey;
+      background: $table-odd-row-background-color;
       &.publification-control { background: initial; }
     }
     &:nth-child(even) td {
       /* Even rows */
-      background: #b4b4b4;
+      background: $table-even-row-background-color;
       &.publification-control { background: initial; }
     }
   }

@@ -1,15 +1,13 @@
 @import "~bootstrap/scss/variables";
 @import "~bootstrap/scss/mixins";
-
-$background_colour: black;
-$text_colour: white;
+@import '../color-scheme-variables';
 
 /*
   Search Page
  */
 .SearchPage {
-  background: $background_colour;
-  color: $text_colour;
+  background: $page-background-color;
+  color: $page-text-color;
 
   @include make-row;
   padding-top: 0;
@@ -58,6 +56,14 @@ $text_colour: white;
   &__input-group {
     @include make-col-ready;
     @include make-col(6);
+
+    input {
+      color: $control-text-color;
+    }
+
+    button {
+      border-color: $button-border-color;
+    }
   }
 }
 
