@@ -12,28 +12,22 @@ import {PreferencesService} from "../services/preferences.service";
 export class PublificationTableComponent implements OnInit {
 
   @Input() publifications: Array<Publification>;
-  private current_language: string;
   private gettext: Function;
 
-  constructor(private translatorService: TranslatorService, private preferencesService: PreferencesService) { }
+  constructor(private translatorService: TranslatorService) { }
 
   ngOnInit() {
     this.gettext = this.translatorService.getTranslation;
-
-    this.preferencesService.preferences$
-      .subscribe((new_prefs) => {
-        this.current_language = new_prefs["language_code"];
-      });
   }
 
   private getRespectivePublificationType = (type_id) => {
     switch(type_id) {
 
       case PublificationType.MOVIE:
-        return this.gettext(this.current_language, "a_movie");
+        return this.gettext("a_movie");
 
       case PublificationType.TVSHOW:
-        return this.gettext(this.current_language, "a_tvserie");
+        return this.gettext("a_tvserie");
 
       default:
         return "Undefined publification type";

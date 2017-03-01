@@ -1,7 +1,7 @@
 <div class="SearchPage">
 
   <div class="SearchPage__loader" *ngIf="!tmdbApiReady">
-    <p>Initializing API . . .</p>
+    <p>{{gettext("initing_api")}}</p>
   </div>
 
   <div class="SearchPage__controls" *ngIf="tmdbApiReady">
@@ -15,13 +15,13 @@
             type="text"
             placeholder="Search"
             ngModel
-            (keyup.enter)="onStartSearch(search.value)"
+            (keyup.enter)="startSearch(search.value)"
         />
         <button
             [disabled]="loading || !search.value"
-            (click)="onStartSearch(search.value)"
+            (click)="startSearch(search.value)"
         >
-          Search
+          {{gettext("search")}}
         </button>
       </div>
     </div>
@@ -31,13 +31,22 @@
     <div class="SearchResults">
       <div class="SearchResults__header">
 
-        <span *ngIf="!(themoviedbService.searchEverInitialized)">Odotetaan haun käynnistämistä</span>
+        <span *ngIf="!(themoviedbService.searchEverInitialized)">{{gettext("waiting_for_search")}}</span>
 
-        <span *ngIf="loading">Ladataan uusia tuloksia . . . ({{results.length}} löytynyt)</span>
+        <span *ngIf="loading">{{gettext("loading_results")}} ({{results.length}} {{gettext("found")}})</span>
 
         <span *ngIf="themoviedbService.searchEverInitialized && !loading">
-          <span *ngIf="results.length">Haku valmis, löytyi {{results.length}} tulosta</span>
-          <span *ngIf="!(results.length)">Haulla ei löytynyt yhtään tulosta</span>
+          <span *ngIf="results.length">
+            {{gettext("search_done_found_results_x")}} {{results.length}}
+            <button
+                *ngIf="themoviedbService.movie_pagination_pending || themoviedbService.tvshow_pagination_pending"
+                [disabled]="loading"
+                (click)="loadMore()"
+            >
+              {{gettext("found_more_results_click_to_load")}}
+            </button>
+          </span>
+          <span *ngIf="!(results.length)">{{gettext("No results found")}}</span>
         </span>
 
       </div>

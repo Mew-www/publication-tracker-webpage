@@ -1,32 +1,24 @@
 import { Injectable } from '@angular/core';
+import {i18n} from '../constants/i18n';
+import {PreferencesService} from "./preferences.service";
 
 @Injectable()
 export class TranslatorService {
 
-  private translations = {
-    'en': {
-      "a_movie": "Movie",
-      "a_tvserie": "Serie",
-      "publication_release_date": "Release date",
-      "publication_title": "Title",
-      "publication_type": "Type",
-      "publication_genres": "Genres",
-      "track_new_publication": "Add to tracked"
-    },
-    'fi': {
-      "a_movie": "Elokuva",
-      "a_tvserie": "Sarja",
-      "publication_release_date": "Julkaisupäivämäärä",
-      "publication_title": "Nimi",
-      "publication_type": "Tyyppi",
-      "publication_genres": "Tyylilajit",
-      "track_new_publication": "Lisää seurattaviin"
-    }
-  };
+  private translations = i18n.translations;
+  private current_language = 'en'; // default
 
-  constructor() { }
+  constructor(private preferencesService: PreferencesService) {
 
-  getTranslation = (language, phrase_id) => {
+    this.preferencesService.preferences$
+      .subscribe((new_prefs) => {
+        this.current_language = new_prefs["language_code"];
+      });
+  }
+
+  getTranslation = (phrase_id, opt_alt_language?) => {
+    let language = opt_alt_language ? opt_alt_language : this.current_language;
+
     if (!this.translations.hasOwnProperty(language)) {
       throw new Error(`Attempted to find translation from non-configured language '${language}'`);
     }
