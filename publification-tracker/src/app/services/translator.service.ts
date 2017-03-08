@@ -16,6 +16,10 @@ export class TranslatorService {
       });
   }
 
+  changeLanguage = (next_language) => {
+    this.current_language = next_language;
+  };
+
   getTranslation = (phrase_id, opt_alt_language?) => {
     let language = opt_alt_language ? opt_alt_language : this.current_language;
 
