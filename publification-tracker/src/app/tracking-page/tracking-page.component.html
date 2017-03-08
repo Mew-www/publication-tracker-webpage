@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-3"></div>
       <div class="col">
-        Show tracked:
+        {{getText("show_tracked")}}:
         <div class="row">
           <div class="col-1">
             <label class="custom-control custom-checkbox">
@@ -13,7 +13,7 @@
                 (change)="checkboxChange(movietype,$event.target.checked)"
               >
               <span class="custom-control-indicator"></span>
-              <span class="custom-control-description">Movies</span>
+              <span class="custom-control-description">{{getText("a_movie")}}</span>
             </label>
           </div>
           <div class="col-1">
@@ -24,7 +24,7 @@
                 (change)="checkboxChange(serietype,$event.target.checked)"
               >
               <span class="custom-control-indicator"></span>
-              <span class="custom-control-description">Series</span>
+              <span class="custom-control-description">{{getText("a_tvserie")}}</span>
             </label>
           </div>
         </div>
@@ -38,15 +38,15 @@
     <table class="table table-responsive">
       <thead>
         <tr>
-          <th>Date</th>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Genre</th>
+          <th>{{getText("publication_release_date")}}</th>
+          <th>{{getText("publication_title")}}</th>
+          <th>{{getText("publication_type")}}</th>
+          <th>{{getText("publication_genres")}}</th>
         </tr>
       </thead>
       <tbody>
        <tr *ngFor="let movie of movies">
-         <th scope="row">{{movie.getReleaseDateAsString()}}</th>
+         <td scope="row">{{movie.getReleaseDateAsString()}}</td>
          <td>{{movie.getFullName()}}</td>
          <td>{{movie.type}}</td>
          <td><span *ngFor="let genre of movie.genres">{{genre }}</span></td>
@@ -59,4 +59,7 @@
      </tbody>
     </table>
   </div>
+</div>
+<div id="NoneTracked" *ngIf="movies.length==0">
+  {{getText("you_don't_have_eny_tracked_items._go_to")}} <a routerLink="/search">{{getText("search_page")}}</a>
 </div>

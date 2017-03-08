@@ -1,5 +1,22 @@
 @import "../color-scheme-variables";
 
-.div table.table-responsive .tr{
+
+table.table-responsive thead tr{
   color: $table-body-text-color;
+  background-color: $table-heading-background-color;
+}
+table.table-responsive tbody tr:nth-child(2n+1){
+  color: $table-body-text-color;
+  background-color: $table-odd-row-background-color;
+}
+table.table-responsive tbody tr:nth-child(2n){
+  color: $table-body-text-color;
+  background-color: $table-even-row-background-color;
+}
+table.table-responsive {
+  display: table;
+  width: auto;
+}
+#NoneTracked{
+  text-align: center;
 }

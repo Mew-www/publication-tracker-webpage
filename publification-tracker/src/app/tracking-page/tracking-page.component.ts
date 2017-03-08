@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ThemoviedbService} from "../services/themoviedb.service";
 import {Publification} from "../interfaces/publification";
 import {PublificationType} from "../enums/publification-type";
+import {TranslatorService} from "../services/translator.service";
 
 @Component({
   selector: 'app-tracking-page',
@@ -14,10 +15,13 @@ export class TrackingPageComponent implements OnInit {
   private diplayedtypes:Array<PublificationType>=[];
   private movietype=PublificationType.MOVIE;
   private serietype=PublificationType.TVSHOW;
+  private getText:Function;
 
-  constructor(private themoviedbService: ThemoviedbService) { }
+  constructor(private themoviedbService: ThemoviedbService, private translate: TranslatorService) { }
 
   ngOnInit() {
+    this.getText=this.translate.getTranslation;
+
     localStorage.setItem("tracked", JSON.stringify(
       [
 
