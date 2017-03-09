@@ -21,7 +21,8 @@ export class i18n {
       "search_page": "search page",
       "publication-tracker": "Publication-Tracker",
       "tracking": "Tracking",
-      "searchP": "Search"
+      "searchP": "Search",
+      "no_date": "Unknown release date"
     },
     'fi': {
       "a_movie": "Elokuva",
@@ -44,7 +45,8 @@ export class i18n {
       "search_page": "Haku sivulle",
       "publication-tracker": "Julkaisuseuranta",
       "tracking": "Seurauksessa",
-      "searchP": "Haku"
+      "searchP": "Haku",
+      "no_date": "Tuntemeton Julkaisupäivä"
 
 
     }

@@ -42,14 +42,15 @@
           <th>{{getText("publication_title")}}</th>
           <th>{{getText("publication_type")}}</th>
           <th>{{getText("publication_genres")}}</th>
+          <th>{{""}}</th>
         </tr>
       </thead>
       <tbody>
        <tr *ngFor="let movie of movies">
-         <td scope="row">{{movie.getReleaseDateAsString()}}</td>
-         <td>{{movie.getFullName()}}</td>
+         <td scope="row">{{changeDate(movie.release_date)}}</td>
+         <td>{{movie.name}}</td>
          <td>{{movie.type}}</td>
-         <td><span *ngFor="let genre of movie.genres">{{genre }}</span></td>
+         <td><span *ngFor="let genre of movie.genres">{{genre}}{{", "}}</span></td>
          <td>
            <label class="form-check-label">
              <button class="btn btn-danger" (click)="Onclick(movie.release_date,movie.name)">Remove</button>

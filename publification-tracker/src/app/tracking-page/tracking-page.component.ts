@@ -22,12 +22,6 @@ export class TrackingPageComponent implements OnInit {
   ngOnInit() {
     this.getText=this.translate.getTranslation;
 
-    localStorage.setItem("tracked", JSON.stringify(
-      [
-
-      ]
-    ))
-
    var movies=JSON.parse(localStorage.getItem("tracked"))
      .sort(function (a:Publification, b:Publification) {
      if (a.release_date<b.release_date) {
@@ -47,12 +41,17 @@ export class TrackingPageComponent implements OnInit {
     for(var i = Remove.length-1; i>=0; i--){
       console.log(PDate,Name);
       if (Remove[i].release_date === PDate && Remove[i].name === Name) Remove.splice(i, 1);
-      console.log(Remove);
     }
     localStorage.setItem("tracked" ,JSON.stringify(Remove));
-
+    location.reload();
   }
-
+  private changeDate =(releaseDate)=>{
+    if (releaseDate!= null){
+    var d = new Date (JSON.parse(releaseDate));
+    var cangeddate: string = d.getDate()+"."+d.getMonth()+"."+d.getFullYear();
+    return cangeddate;
+    }else {return this.getText("no_date");}
+  }
   private checkboxChange = (type, check) =>{
     if (check){
       this.diplayedtypes.push(type)
