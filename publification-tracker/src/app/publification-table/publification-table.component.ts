@@ -3,6 +3,8 @@ import {Publification} from "../interfaces/publification";
 import {PublificationType} from "../enums/publification-type";
 import {TranslatorService} from "../services/translator.service";
 import {PreferencesService} from "../services/preferences.service";
+import {Movie} from "../models/movie";
+import {Tvshow} from "../models/tvshow";
 
 @Component({
   selector: 'app-publification-table',
@@ -13,11 +15,18 @@ export class PublificationTableComponent implements OnInit {
 
   @Input() publifications: Array<Publification>;
   private gettext: Function;
+  private existing_publification_ids: Array<string>;
 
   constructor(private translatorService: TranslatorService) { }
 
   ngOnInit() {
     this.gettext = this.translatorService.getTranslation;
+    this.existing_publification_ids = JSON.parse(
+      localStorage.getItem("tracked") === null ? "[]" : localStorage.getItem("tracked")
+    ).map((pub_json) => {
+      return pub_json["uid"];
+    });
+    console.log(this.existing_publification_ids);
   }
 
   private getRespectivePublificationType = (type_id) => {
@@ -32,6 +41,13 @@ export class PublificationTableComponent implements OnInit {
       default:
         return "Undefined publification type";
     }
+  };
+
+  private addToTracked = (publification: Publification) => {
+    let tracked = JSON.parse(localStorage.getItem("tracked") === null ? "[]" : localStorage.getItem("tracked"));
+    tracked.push(publification.toSimpleObject());
+    localStorage.setItem("tracked", JSON.stringify(tracked));
+    this.existing_publification_ids.push(publification.uid);
   };
 
 }

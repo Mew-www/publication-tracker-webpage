@@ -6,6 +6,9 @@ export interface Publification {
   release_date: Date;
   genres: Array<string>;
 
+  uid: string;
+
   getFullName(): string;
   getReleaseDateAsString(): string;
+  toSimpleObject(): Object; // Could we "toJSON" but ... for <reasons> it's not
 }

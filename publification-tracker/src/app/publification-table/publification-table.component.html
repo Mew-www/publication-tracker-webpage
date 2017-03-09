@@ -24,7 +24,9 @@
       </td>
       <td class="publification-control">
         <button
-          class="btn btn-info"
+            *ngIf="existing_publification_ids.indexOf(pub.uid) === -1"
+            class="btn btn-info"
+            (click)="addToTracked(pub)"
         >
           {{gettext("track_new_publication")}}
         </button>

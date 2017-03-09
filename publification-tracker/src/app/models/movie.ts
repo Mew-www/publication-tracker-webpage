@@ -7,13 +7,28 @@ export class Movie implements Publification {
   public name: string;
   public release_date: Date;
   public genres: Array<string>;
+  public uid: string;
   //Movie (TMDB API) specific properties
   private themoviedb_id: Number;
   private original_title: string;
   private original_language: string;
   private overview: string;
 
-  constructor(tmdb_result_object, movie_genremap: Array<any>) {
+  constructor(tmdb_result_object, movie_genremap: Array<any>, alternative_json_constructor?) {
+    if (alternative_json_constructor) {
+      let old_object = JSON.parse(alternative_json_constructor);
+      this.themoviedb_id     = old_object.themoviedb_id;
+      this.name              = old_object.name;
+      this.original_title    = old_object.original_title;
+      this.original_language = old_object.original_language;
+      this.release_date      = new Date(old_object.release_date);
+      this.genres            = old_object.genres;
+      this.overview          = old_object.overview;
+      this.uid               = old_object.uid;
+      return;
+    }
+
+    this.uid               = "MOVIE#" + tmdb_result_object.id;
     this.themoviedb_id     = tmdb_result_object.id;
     this.name              = tmdb_result_object.title;
     this.original_title    = tmdb_result_object.original_title;
@@ -38,4 +53,20 @@ export class Movie implements Publification {
     else
       return "Unknown release date";
   };
+
+  public toSimpleObject = () => {
+    return {
+      "type":              "MOVIE", // Use strings instead of ENUM if the ENUM was to change between versions
+
+      "uid":               this.uid,
+      "themoviedb_id":     this.themoviedb_id, // Number
+      "name":              this.name,
+      "original_title":    this.original_title,
+      "original_language": this.original_language,
+      "release_date":      JSON.stringify(this.release_date), // Date -> gets converted to epoch by JSON.stringify
+      "genres":            this.genres, // Array
+      "overview":          this.overview
+    };
+  };
+
 }
