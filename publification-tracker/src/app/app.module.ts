@@ -9,7 +9,6 @@ import { TrackingPageComponent } from './tracking-page/tracking-page.component';
 import { SearchPageComponent } from './search-page/search-page.component';
 
 import { RouterModule, Routes } from '@angular/router';
-import { TestPageComponent } from './test-page/test-page.component';
 import {ThemoviedbService} from "./services/themoviedb.service";
 import {PreferencesService} from "./services/preferences.service";
 import { KonamiComponent } from './konami/konami.component';
@@ -19,7 +18,6 @@ import {TranslatorService} from "./services/translator.service";
 const appRoutes: Routes = [
   { path: 'tracking', component: TrackingPageComponent },
   { path: 'search', component: SearchPageComponent },
-  { path: 'test', component: TestPageComponent },
   { path: '**', component: TrackingPageComponent }
 ];
 
@@ -30,7 +28,6 @@ const appRoutes: Routes = [
     NavBarComponent,
     TrackingPageComponent,
     SearchPageComponent,
-    TestPageComponent,
     KonamiComponent,
     PublificationTableComponent
   ],
