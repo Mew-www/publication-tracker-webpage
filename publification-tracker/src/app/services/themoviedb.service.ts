@@ -175,7 +175,11 @@ export class ThemoviedbService {
         } else {
           // Paginate maximum of 10 times, cache results, and resolve the promise when done
           this.movie_pages_prev_stop = 0;
-          loadMoviesPaginated(2, [], deferredMovieLoad);
+          loadMoviesPaginated(
+            2,
+            first_results.results.map(movieJson => new Movie(movieJson, this.movie_genremap)),
+            deferredMovieLoad
+          );
         }
       });
 
@@ -188,7 +192,11 @@ export class ThemoviedbService {
         } else {
           // Paginate maximum of 10 times, cache results, and resolve the promise when done
           this.tvshow_pages_prev_stop = 0;
-          loadTvshowsPaginated(2, [], deferredTvshowLoad);
+          loadTvshowsPaginated(
+            2,
+            first_results.results.map(tvshowJson => new Tvshow(tvshowJson, this.tvshow_genremap)),
+            deferredTvshowLoad
+          );
         }
       });
 
