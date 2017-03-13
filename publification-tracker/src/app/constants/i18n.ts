@@ -17,7 +17,7 @@ export class i18n {
       "no_results_found": "Search found no results",
       "waiting_for_search": "Waiting for initial search",
       "show_tracked": "Show tracked",
-      "you_don't_have_eny_tracked_items._go_to": "You don´t have eny tracked items. Go to",
+      "you_don't_have_eny_tracked_items._go_to": "You don´t have any tracked items. Go to",
       "search_page": "search page",
       "publication-tracker": "Publication-Tracker",
       "tracking": "Tracking",
