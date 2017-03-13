@@ -22,7 +22,7 @@ export class TrackingPageComponent implements OnInit {
   ngOnInit() {
     this.getText=this.translate.getTranslation;
 
-   var movies=JSON.parse(localStorage.getItem("tracked"))
+   var movies=JSON.parse(localStorage.getItem("tracked") === null ? "[]" : localStorage.getItem("tracked"))
      .sort(function (a:Publification, b:Publification) {
      if (a.release_date<b.release_date) {
        return -1;
