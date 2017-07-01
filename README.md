@@ -1,4 +1,4 @@
-# publi(fi)cation-tracker-webpage - yes there's a typo in repo name
+# publication-tracker-webpage
 Angular2 harkkatyö / Angular2 school assignment
 
 First time playing around Angular2 using ng-cli, in team of 2.
